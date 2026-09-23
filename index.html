@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WinVip789 - Cổng Game Tài Xỉu Đổi Thưởng</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- MÀN HÌNH LOADING BAN ĐẦU -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="logo-vip">WINVIP789</div>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="loading-text">Đang tải tài nguyên... 0%</div>
+        </div>
+    </div>
+
+    <!-- GIAO DIỆN CHÍNH -->
+    <div id="main-app" class="hidden">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-left">
+                <span id="user-display-name" class="hidden">Khách</span>
+                <span id="account-balance" class="hidden"><i class="fa-solid fa-coins"></i> <span id="balance-num">1,000,000</span> VNDT</span>
+            </div>
+            <div class="header-center">
+                <div class="brand-logo">WINVIP789</div>
+            </div>
+            <div class="header-right">
+                <div id="auth-buttons">
+                    <button class="btn-auth" onclick="openModal('login-modal')">Đăng nhập</button>
+                    <button class="btn-auth primary" onclick="openModal('register-modal')">Đăng ký</button>
+                </div>
+                <div id="user-controls" class="hidden">
+                    <button class="icon-btn" onclick="openModal('setting-modal')" title="Cài đặt"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- SẢNH CHÍNH GAME TÀI XỈU -->
+        <main class="game-lobby">
+            <div class="game-container">
+                <!-- THANH CÔNG CỤ GÓC TRÁI GAME -->
+                <div class="game-top-left">
+                    <button class="icon-btn-game" onclick="openModal('algorithm-modal')" title="Thuật toán"><i class="fa-solid fa-chart-line"></i></button>
+                </div>
+
+                <!-- KHU VỰC XÚC XẮC & PHIÊN -->
+                <div class="center-arena">
+                    <div class="session-info">
+                        Phiên #<span id="session-id">88231</span> | <span id="timer-text">45</span>s
+                    </div>
+                    <div class="dice-box" id="dice-container">
+                        <div class="dice" id="dice-1">?</div>
+                        <div class="dice" id="dice-2">?</div>
+                        <div class="dice" id="dice-3">?</div>
+                    </div>
+                    <div class="peek-control">
+                        <label class="switch">
+                            <input type="checkbox" id="peek-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Mở bát từ từ (<i class="fa-solid fa-hand"></i>)</span>
+                    </div>
+                </div>
+
+                <!-- CỬA TÀI & XỈU -->
+                <div class="betting-table">
+                    <!-- Ô XỈU -->
+                    <div class="bet-box xiu-box" onclick="placeBet('xiu')">
+                        <div class="bet-title">XỈU</div>
+                        <div class="player-count"><i class="fa-solid fa-users"></i> <span id="xiu-players">142</span></div>
+                        <div class="total-bet-money">Tổng: <span id="xiu-total">15,420,000</span></div>
+                        <div class="my-bet-money">Bạn cược: <span id="xiu-my">0</span></div>
+                    </div>
+
+                    <!-- Ô TÀI -->
+                    <div class="bet-box tai-box" onclick="placeBet('tai')">
+                        <div class="bet-title">TÀI</div>
+                        <div class="player-count"><i class="fa-solid fa-users"></i> <span id="tai-players">168</span></div>
+                        <div class="total-bet-money">Tổng: <span id="tai-total">18,910,000</span></div>
+                        <div class="my-bet-money">Bạn cược: <span id="tai-my">0</span></div>
+                    </div>
+                </div>
+
+                <!-- BẢNG CẦU (LỊCH SỬ) -->
+                <div class="road-map" id="road-map">
+                    <!-- Các chấm cầu hiển thị tự động -->
+                </div>
+            </div>
+        </main>
+
+        <!-- THANH ĐÁY NGOÀI GIAO DIỆN GAME (NÚT RÚT TIỀN) -->
+        <footer class="app-footer">
+            <button class="btn-withdraw" onclick="openModal('withdraw-modal')">
+                <i class="fa-solid fa-wallet"></i> RÚT TIỀN ẢO
+            </button>
+        </footer>
+    </div>
+
+    <!-- MODAL ĐĂNG NHẬP -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            <h2>ĐĂNG NHẬP WINVIP789</h2>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <input type="text" id="login-user" placeholder="Tên đăng nhập" required>
+                <input type="password" id="login-pass" placeholder="Mật khẩu" required>
+                <div class="remember-group">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Ghi nhớ mật khẩu</label>
+                </div>
+                <button type="submit" class="btn-submit">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG KÝ -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('register-modal')">&times;</span>
+            <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+            <form id="register-form" onsubmit="handleRegister(event)">
+                <input type="text" id="reg-user" placeholder="Tên người dùng" required>
+                <input type="text" id="reg-display" placeholder="Tên hiển thị" required>
+                <input type="password" id="reg-pass" placeholder="Mật khẩu" required>
+                <input type="password" id="reg-repass" placeholder="Nhập lại mật khẩu" required>
+                <button type="submit" class="btn-submit">Đăng Ký Ngay</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CÀI ĐẶT (NHẠC NỀN) -->
+    <div id="setting-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('setting-modal')">&times;</span>
+            <h2>CÀI ĐẶT HỆ THỐNG</h2>
+            <div class="setting-item">
+                <span>Nhạc nền sòng bạc</span>
+                <label class="switch">
+                    <input type="checkbox" id="bg-music-toggle" onchange="toggleMusic()">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <button class="btn-submit logout-btn" onclick="handleLogout()">Đăng Xuất</button>
+        </div>
+    </div>
+
+    <!-- MODAL THUẬT TOÁN (ZIC ZAC) -->
+    <div id="algorithm-modal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('algorithm-modal')">&times;</span>
+            <h2>THUẬT TOÁN & QUY TẮC TÀI XỈU</h2>
+            <div class="algo-info">
+                <p><strong>Quy tắc tính điểm:</strong> Tổng điểm 3 viên xúc xắc từ 3 đến 10 là <strong>XỈU</strong>, từ 11 đến 18 là <strong>TÀI</strong>.</p>
+                <p><strong>Thuật toán RNG minh bạch:</strong> Kết quả được sinh ngẫu nhiên qua hàm mã hóa an toàn ở client, đảm bảo tính công bằng 100% cho mỗi phiên cược.</p>
+                <div class="matrix-box">
+                    <span>Trạng thái máy chủ: Đang đồng bộ hóa SSL</span>
+                    <span>Mã phiên bảo mật: <code id="algo-hash">a9f87b2c4e1</code></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RÚT TIỀN ẢO -->
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('withdraw-modal')">&times;</span>
+            <h2>RÚT TIỀN HỆ THỐNG</h2>
+            <div class="withdraw-tabs">
+                <button class="w-tab active" onclick="switchWithdrawTab('bank')">Ngân hàng / ZaloPay</button>
+                <button class="w-tab" onclick="switchWithdrawTab('card')">Thẻ cào</button>
+                <button class="w-tab" onclick="switchWithdrawTab('usdt')">USDT (Crypto)</button>
+            </div>
+            <div id="withdraw-body" class="withdraw-form-container">
+                <!-- Dynamic form populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- THÔNG BÁO CƯỢC / KẾT QUẢ -->
+    <div id="toast-notify" class="toast hidden"></div>
+
+    <!-- AUDIO ELEMENTS -->
+    <audio id="bg-audio" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
