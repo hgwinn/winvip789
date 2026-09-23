@@ -12,6 +12,9 @@ let taiPlayersCount = 168;
 let xiuPlayersCount = 142;
 let gameHistory = ['tai', 'xiu', 'tai', 'tai', 'xiu', 'xiu', 'tai', 'xiu'];
 
+let selectedChip = 1000; // Mặc định 1k
+let selectedTargetType = null; // 'tai' hoặc 'xiu'
+
 // KHI TẢI TRANG
 window.onload = function() {
     let progress = 0;
@@ -82,7 +85,6 @@ function handleLogin(e) {
         closeModal('login-modal');
         showToast("Đăng nhập thành công!");
     } else {
-        // Cho phép đăng nhập nhanh demo nếu chưa có tài khoản lưu
         currentUser = user;
         loginSuccessActions();
         closeModal('login-modal');
@@ -126,14 +128,129 @@ function updateBalanceUI() {
     document.getElementById('balance-num').innerText = userBalance.toLocaleString();
 }
 
-// GAME LOGIC TÀI XỈU
+// XỬ LÝ CHỌN CHIP & CỬA CƯỢC
+function setChip(amount) {
+    selectedChip = amount;
+    document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    let text = amount >= 1000000 ? (amount / 1000000) + 'M' : (amount / 1000) + 'k';
+    document.getElementById('current-chip').innerText = text;
+}
+
+function selectTarget(type) {
+    selectedTargetType = type;
+    let name = type === 'tai' ? 'TÀI' : 'XỈU';
+    document.getElementById('selected-target').innerText = name;
+    showToast(`Đã chọn cửa: ${name}`);
+}
+
+function confirmBet() {
+    if (!currentUser) {
+        showToast("Vui lòng đăng nhập để cược!");
+        openModal('login-modal');
+        return;
+    }
+    if (!isBettingOpen) {
+        showToast("Đã hết thời gian cược phiên này!");
+        return;
+    }
+    if (!selectedTargetType) {
+        showToast("Vui lòng bấm chọn cửa TÀI hoặc XỈU trước!");
+        return;
+    }
+    if (userBalance < selectedChip) {
+        showToast("Số dư tiền ảo không đủ để cược mức này!");
+        return;
+    }
+
+    userBalance -= selectedChip;
+    updateBalanceUI();
+
+    if (selectedTargetType === 'tai') {
+        myBetTai += selectedChip;
+        totalTaiMoney += selectedChip;
+        document.getElementById('tai-my').innerText = myBetTai.toLocaleString();
+        document.getElementById('tai-total').innerText = totalTaiMoney.toLocaleString();
+    } else {
+        myBetXiu += selectedChip;
+        totalXiuMoney += selectedChip;
+        document.getElementById('xiu-my').innerText = myBetXiu.toLocaleString();
+        document.getElementById('xiu-total').innerText = totalXiuMoney.toLocaleString();
+    }
+
+    showToast(`Đã cược thành công ${selectedChip.toLocaleString()} vào ${selectedTargetType.toUpperCase()}`);
+}
+
+function handleAllIn() {
+    if (!currentUser) {
+        showToast("Vui lòng đăng nhập!");
+        openModal('login-modal');
+        return;
+    }
+    if (!isBettingOpen) {
+        showToast("Đã hết thời gian cược!");
+        return;
+    }
+    if (!selectedTargetType) {
+        showToast("Vui lòng chọn cửa TÀI hoặc XỈU để ALL-IN!");
+        return;
+    }
+    if (userBalance <= 0) {
+        showToast("Bạn đã hết sạch tiền ảo để All-In!");
+        return;
+    }
+
+    let allInAmount = userBalance;
+    userBalance = 0;
+    updateBalanceUI();
+
+    if (selectedTargetType === 'tai') {
+        myBetTai += allInAmount;
+        totalTaiMoney += allInAmount;
+        document.getElementById('tai-my').innerText = myBetTai.toLocaleString();
+        document.getElementById('tai-total').innerText = totalTaiMoney.toLocaleString();
+    } else {
+        myBetXiu += allInAmount;
+        totalXiuMoney += allInAmount;
+        document.getElementById('xiu-my').innerText = myBetXiu.toLocaleString();
+        document.getElementById('xiu-total').innerText = totalXiuMoney.toLocaleString();
+    }
+
+    showToast(`🔥 ALL-IN THÀNH CÔNG ${allInAmount.toLocaleString()} vào ${selectedTargetType.toUpperCase()}!`);
+}
+
+function handleCancelBet() {
+    if (myBetTai === 0 && myBetXiu === 0) {
+        showToast("Bạn chưa đặt cược khoản nào trong phiên này để huỷ!");
+        return;
+    }
+
+    let refunded = myBetTai + myBetXiu;
+    userBalance += refunded;
+    
+    totalTaiMoney -= myBetTai;
+    totalXiuMoney -= myBetXiu;
+
+    myBetTai = 0;
+    myBetXiu = 0;
+
+    document.getElementById('tai-my').innerText = '0';
+    document.getElementById('xiu-my').innerText = '0';
+    document.getElementById('tai-total').innerText = totalTaiMoney.toLocaleString();
+    document.getElementById('xiu-total').innerText = totalXiuMoney.toLocaleString();
+
+    updateBalanceUI();
+    showToast(`Đã huỷ cược và hoàn lại ${refunded.toLocaleString()} VNDT!`);
+}
+
+// GAME LOOP TÀI XỈU
 function initGameLoop() {
     setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
             document.getElementById('timer-text').innerText = timeLeft;
 
-            // Mô phỏng người chơi khác đặt cược ngẫu nhiên
             if (timeLeft > 5 && Math.random() > 0.4) {
                 totalTaiMoney += Math.floor(Math.random() * 50000) + 10000;
                 totalXiuMoney += Math.floor(Math.random() * 50000) + 10000;
@@ -141,7 +258,6 @@ function initGameLoop() {
                 document.getElementById('xiu-total').innerText = totalXiuMoney.toLocaleString();
             }
         } else {
-            // Hết giờ -> Quay kết quả
             isBettingOpen = false;
             document.getElementById('timer-text').innerText = "Đang mở...";
             
@@ -152,43 +268,7 @@ function initGameLoop() {
     }, 1000);
 }
 
-function placeBet(type) {
-    if (!currentUser) {
-        showToast("Vui lòng đăng nhập để tham gia đặt cược!");
-        openModal('login-modal');
-        return;
-    }
-    if (!isBettingOpen) {
-        showToast("Đã hết thời gian đặt cược phiên này!");
-        return;
-    }
-
-    let betAmount = 50000; // Mặc định cược 50,000 VNDT mỗi lần bấm
-    if (userBalance < betAmount) {
-        showToast("Số dư tiền ảo không đủ để đặt cược!");
-        return;
-    }
-
-    userBalance -= betAmount;
-    updateBalanceUI();
-
-    if (type === 'tai') {
-        myBetTai += betAmount;
-        totalTaiMoney += betAmount;
-        document.getElementById('tai-my').innerText = myBetTai.toLocaleString();
-        document.getElementById('tai-total').innerText = totalTaiMoney.toLocaleString();
-        showToast("Đã cược 50,000 vào TÀI");
-    } else {
-        myBetXiu += betAmount;
-        totalXiuMoney += betAmount;
-        document.getElementById('xiu-my').innerText = myBetXiu.toLocaleString();
-        document.getElementById('xiu-total').innerText = totalXiuMoney.toLocaleString();
-        showToast("Đã cược 50,000 vào XỈU");
-    }
-}
-
 function resolveGame() {
-    // Tung 3 xúc xắc ngẫu nhiên từ 1 đến 6
     let d1 = Math.floor(Math.random() * 6) + 1;
     let d2 = Math.floor(Math.random() * 6) + 1;
     let d3 = Math.floor(Math.random() * 6) + 1;
@@ -199,13 +279,6 @@ function resolveGame() {
     document.getElementById('dice-2').innerText = d2;
     document.getElementById('dice-3').innerText = d3;
 
-    // Kiểm tra tính năng "Mở bát từ từ"
-    let isPeekOn = document.getElementById('peek-toggle').checked;
-    if (isPeekOn) {
-        showToast(`Kết quả phiên: ${sum} điểm (${result.toUpperCase()})`);
-    }
-
-    // Tính tiền thắng thua
     let winMsg = `Kết quả: ${d1}-${d2}-${d3} (${sum} điểm - ${result.toUpperCase()}). `;
     if (result === 'tai' && myBetTai > 0) {
         let won = myBetTai * 2;
@@ -222,12 +295,10 @@ function resolveGame() {
     showToast(winMsg);
     updateBalanceUI();
 
-    // Cập nhật cầu
     gameHistory.push(result);
     if (gameHistory.length > 20) gameHistory.shift();
     renderRoadMap();
 
-    // Reset phiên sau 5 giây
     setTimeout(() => {
         resetNewSession();
     }, 5000);
@@ -264,7 +335,7 @@ function toggleMusic() {
     const audio = document.getElementById('bg-audio');
     const isChecked = document.getElementById('bg-music-toggle').checked;
     if (isChecked) {
-        audio.play().catch(e => console.log("Audio autoplay restricted"));
+        audio.play().catch(e => console.log("Audio restricted"));
         showToast("Đã bật nhạc nền sòng bạc");
     } else {
         audio.pause();
@@ -272,7 +343,7 @@ function toggleMusic() {
     }
 }
 
-// RÚT TIỀN ẢO TABS
+// RÚT TIỀN TABS
 function switchWithdrawTab(type) {
     document.querySelectorAll('.w-tab').forEach(el => el.classList.remove('active'));
     event.target.classList.add('active');
@@ -280,7 +351,7 @@ function switchWithdrawTab(type) {
     const bodyEl = document.getElementById('withdraw-body');
     if (type === 'bank') {
         bodyEl.innerHTML = `
-            <select id="bank-name" style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
+            <select style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
                 <option>Vietcombank</option>
                 <option>Techcombank</option>
                 <option>MB Bank</option>
@@ -294,12 +365,12 @@ function switchWithdrawTab(type) {
         `;
     } else if (type === 'card') {
         bodyEl.innerHTML = `
-            <select id="telco-name" style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
+            <select style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
                 <option>Viettel</option>
                 <option>Vinaphone</option>
                 <option>Mobifone</option>
             </select>
-            <select id="card-amount" style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
+            <select style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px;">
                 <option>50,000 VND</option>
                 <option>100,000 VND</option>
                 <option>500,000 VND</option>
