@@ -71,19 +71,50 @@
                 <!-- CỬA TÀI & XỈU -->
                 <div class="betting-table">
                     <!-- Ô XỈU -->
-                    <div class="bet-box xiu-box" onclick="placeBet('xiu')">
+                    <div class="bet-box xiu-box" onclick="selectTarget('xiu')">
                         <div class="bet-title">XỈU</div>
                         <div class="player-count"><i class="fa-solid fa-users"></i> <span id="xiu-players">142</span></div>
                         <div class="total-bet-money">Tổng: <span id="xiu-total">15,420,000</span></div>
-                        <div class="my-bet-money">Bạn cược: <span id="xiu-my">0</span></div>
+                        <div class="my-bet-money">Đã chọn Xỉu: <span id="xiu-my">0</span></div>
                     </div>
 
                     <!-- Ô TÀI -->
-                    <div class="bet-box tai-box" onclick="placeBet('tai')">
+                    <div class="bet-box tai-box" onclick="selectTarget('tai')">
                         <div class="bet-title">TÀI</div>
                         <div class="player-count"><i class="fa-solid fa-users"></i> <span id="tai-players">168</span></div>
                         <div class="total-bet-money">Tổng: <span id="tai-total">18,910,000</span></div>
-                        <div class="my-bet-money">Bạn cược: <span id="tai-my">0</span></div>
+                        <div class="my-bet-money">Đã chọn Tài: <span id="tai-my">0</span></div>
+                    </div>
+                </div>
+
+                <!-- THANH CHỌN MỨC CƯỢC & NÚT ĐIỀU KHIỂN -->
+                <div class="bet-control-panel">
+                    <!-- Hàng chip chọn tiền -->
+                    <div class="chip-container">
+                        <button class="chip-btn active" onclick="setChip(1000)">1k</button>
+                        <button class="chip-btn" onclick="setChip(5000)">5k</button>
+                        <button class="chip-btn" onclick="setChip(10000)">10k</button>
+                        <button class="chip-btn" onclick="setChip(50000)">50k</button>
+                        <button class="chip-btn" onclick="setChip(100000)">100k</button>
+                        <button class="chip-btn" onclick="setChip(200000)">200k</button>
+                        <button class="chip-btn" onclick="setChip(500000)">500k</button>
+                        <button class="chip-btn" onclick="setChip(1000000)">1M</button>
+                        <button class="chip-btn" onclick="setChip(5000000)">5M</button>
+                        <button class="chip-btn" onclick="setChip(10000000)">10M</button>
+                        <button class="chip-btn" onclick="setChip(50000000)">50M</button>
+                        <button class="chip-btn" onclick="setChip(100000000)">100M</button>
+                    </div>
+
+                    <!-- Hàng nút hành động dưới góc trái & phải -->
+                    <div class="action-buttons-row">
+                        <div class="left-actions">
+                            <button class="action-btn all-in" onclick="handleAllIn()">ALL-IN</button>
+                            <button class="action-btn bet" onclick="confirmBet()">CƯỢC</button>
+                            <button class="action-btn cancel" onclick="handleCancelBet()">HUỶ</button>
+                        </div>
+                        <div class="right-status">
+                            <span>Cửa: <strong id="selected-target">Chưa chọn</strong> | Mức: <strong id="current-chip">1k</strong></span>
+                        </div>
                     </div>
                 </div>
 
