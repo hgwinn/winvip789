@@ -273,6 +273,88 @@ input:checked + .slider:before { transform: translateX(22px); }
     font-weight: bold;
 }
 
+/* BET CONTROL PANEL */
+.bet-control-panel {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.chip-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.chip-btn {
+    background: #2a2a2a;
+    border: 1px solid #555;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.chip-btn.active, .chip-btn:hover {
+    background: var(--gold-solid);
+    color: #000;
+    border-color: #fff;
+}
+
+.action-buttons-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.left-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.action-btn.all-in {
+    background: #ff9800;
+    color: #000;
+}
+
+.action-btn.bet {
+    background: #4caf50;
+    color: #fff;
+}
+
+.action-btn.cancel {
+    background: #f44336;
+    color: #fff;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+    transform: scale(1.05);
+}
+
+.right-status {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
 /* ROAD MAP (CẦU) */
 .road-map {
     display: flex;
