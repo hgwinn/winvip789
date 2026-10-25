@@ -3,222 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WinVip789 - Cổng Game Tài Xỉu Đổi Thưởng</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>WinVIP88 - Ultimate Live Dice Arena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #0d0614 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(20, 10, 35, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(217, 70, 239, 0.2);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+
+        .dice-3d {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+        }
+
+        .dice-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a1b4e, #130b24);
+            border: 2px solid #d946ef;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 15px rgba(217, 70, 239, 0.3);
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            background: #f43f5e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #f43f5e;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(217, 70, 239, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(217, 70, 239, 0.8); }
+        }
+
+        .animate-glow {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
 </head>
-<body>
-    <!-- MÀN HÌNH LOADING BAN ĐẦU -->
-    <div id="loading-screen">
-        <div class="loading-content">
-            <div class="logo-vip">WINVIP789</div>
-            <div class="progress-container">
-                <div id="progress-bar"></div>
-            </div>
-            <div id="loading-text">Đang tải tài nguyên... 0%</div>
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-6">
+
+    <!-- Header -->
+    <header class="max-w-6xl w-full mx-auto flex justify-between items-center glass-panel p-4 rounded-2xl mb-6">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">W</div>
+            <span class="text-2xl font-black tracking-wider bg-gradient-to-r from-pink-500 to-purple-400 bg-clip-text text-transparent">WINVIP88</span>
         </div>
-    </div>
-
-    <!-- GIAO DIỆN CHÍNH -->
-    <div id="main-app" class="hidden">
-        <!-- HEADER -->
-        <header class="app-header">
-            <div class="header-left">
-                <span id="user-display-name" class="hidden">Khách</span>
-                <span id="account-balance" class="hidden"><i class="fa-solid fa-coins"></i> <span id="balance-num">1,000,000</span> VNDT</span>
+        <div class="flex items-center space-x-4">
+            <div class="px-4 py-2 bg-black/40 border border-purple-500/30 rounded-xl text-sm font-semibold">
+                Số dư: <span id="balance" class="text-emerald-400 font-bold">10,000,000</span> VNĐ
             </div>
-            <div class="header-center">
-                <div class="brand-logo">WINVIP789</div>
-            </div>
-            <div class="header-right">
-                <div id="auth-buttons">
-                    <button class="btn-auth" onclick="openModal('login-modal')">Đăng nhập</button>
-                    <button class="btn-auth primary" onclick="openModal('register-modal')">Đăng ký</button>
-                </div>
-                <div id="user-controls" class="hidden">
-                    <button class="icon-btn" onclick="openModal('setting-modal')" title="Cài đặt"><i class="fa-solid fa-gear"></i></button>
-                </div>
-            </div>
-        </header>
-
-        <!-- SẢNH CHÍNH GAME TÀI XỈU -->
-        <main class="game-lobby">
-            <div class="game-container">
-                <!-- THANH CÔNG CỤ GÓC TRÁI GAME -->
-                <div class="game-top-left">
-                    <button class="icon-btn-game" onclick="openModal('algorithm-modal')" title="Thuật toán"><i class="fa-solid fa-chart-line"></i></button>
-                </div>
-
-                <!-- KHU VỰC XÚC XẮC & PHIÊN -->
-                <div class="center-arena">
-                    <div class="session-info">
-                        Phiên #<span id="session-id">88231</span> | <span id="timer-text">45</span>s
-                    </div>
-                    <div class="dice-box" id="dice-container">
-                        <div class="dice" id="dice-1">?</div>
-                        <div class="dice" id="dice-2">?</div>
-                        <div class="dice" id="dice-3">?</div>
-                    </div>
-                    <div class="peek-control">
-                        <label class="switch">
-                            <input type="checkbox" id="peek-toggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span>Mở bát từ từ (<i class="fa-solid fa-hand"></i>)</span>
-                    </div>
-                </div>
-
-                <!-- CỬA TÀI & XỈU -->
-                <div class="betting-table">
-                    <!-- Ô XỈU -->
-                    <div class="bet-box xiu-box" onclick="selectTarget('xiu')">
-                        <div class="bet-title">XỈU</div>
-                        <div class="player-count"><i class="fa-solid fa-users"></i> <span id="xiu-players">142</span></div>
-                        <div class="total-bet-money">Tổng: <span id="xiu-total">15,420,000</span></div>
-                        <div class="my-bet-money">Đã chọn Xỉu: <span id="xiu-my">0</span></div>
-                    </div>
-
-                    <!-- Ô TÀI -->
-                    <div class="bet-box tai-box" onclick="selectTarget('tai')">
-                        <div class="bet-title">TÀI</div>
-                        <div class="player-count"><i class="fa-solid fa-users"></i> <span id="tai-players">168</span></div>
-                        <div class="total-bet-money">Tổng: <span id="tai-total">18,910,000</span></div>
-                        <div class="my-bet-money">Đã chọn Tài: <span id="tai-my">0</span></div>
-                    </div>
-                </div>
-
-                <!-- THANH CHỌN MỨC CƯỢC & NÚT ĐIỀU KHIỂN -->
-                <div class="bet-control-panel">
-                    <!-- Hàng chip chọn tiền -->
-                    <div class="chip-container">
-                        <button class="chip-btn active" onclick="setChip(1000)">1k</button>
-                        <button class="chip-btn" onclick="setChip(5000)">5k</button>
-                        <button class="chip-btn" onclick="setChip(10000)">10k</button>
-                        <button class="chip-btn" onclick="setChip(50000)">50k</button>
-                        <button class="chip-btn" onclick="setChip(100000)">100k</button>
-                        <button class="chip-btn" onclick="setChip(200000)">200k</button>
-                        <button class="chip-btn" onclick="setChip(500000)">500k</button>
-                        <button class="chip-btn" onclick="setChip(1000000)">1M</button>
-                        <button class="chip-btn" onclick="setChip(5000000)">5M</button>
-                        <button class="chip-btn" onclick="setChip(10000000)">10M</button>
-                        <button class="chip-btn" onclick="setChip(50000000)">50M</button>
-                        <button class="chip-btn" onclick="setChip(100000000)">100M</button>
-                    </div>
-
-                    <!-- Hàng nút hành động dưới góc trái & phải -->
-                    <div class="action-buttons-row">
-                        <div class="left-actions">
-                            <button class="action-btn all-in" onclick="handleAllIn()">ALL-IN</button>
-                            <button class="action-btn bet" onclick="confirmBet()">CƯỢC</button>
-                            <button class="action-btn cancel" onclick="handleCancelBet()">HUỶ</button>
-                        </div>
-                        <div class="right-status">
-                            <span>Cửa: <strong id="selected-target">Chưa chọn</strong> | Mức: <strong id="current-chip">1k</strong></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BẢNG CẦU (LỊCH SỬ) -->
-                <div class="road-map" id="road-map">
-                    <!-- Các chấm cầu hiển thị tự động -->
-                </div>
-            </div>
-        </main>
-
-        <!-- THANH ĐÁY NGOÀI GIAO DIỆN GAME (NÚT RÚT TIỀN) -->
-        <footer class="app-footer">
-            <button class="btn-withdraw" onclick="openModal('withdraw-modal')">
-                <i class="fa-solid fa-wallet"></i> RÚT TIỀN ẢO
-            </button>
-        </footer>
-    </div>
-
-    <!-- MODAL ĐĂNG NHẬP -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('login-modal')">&times;</span>
-            <h2>ĐĂNG NHẬP WINVIP789</h2>
-            <form id="login-form" onsubmit="handleLogin(event)">
-                <input type="text" id="login-user" placeholder="Tên đăng nhập" required>
-                <input type="password" id="login-pass" placeholder="Mật khẩu" required>
-                <div class="remember-group">
-                    <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Ghi nhớ mật khẩu</label>
-                </div>
-                <button type="submit" class="btn-submit">Đăng Nhập</button>
-            </form>
+            <button onclick="openModal()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-bold transition shadow-lg text-sm">Rút Tiền</button>
         </div>
-    </div>
+    </header>
 
-    <!-- MODAL ĐĂNG KÝ -->
-    <div id="register-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('register-modal')">&times;</span>
-            <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
-            <form id="register-form" onsubmit="handleRegister(event)">
-                <input type="text" id="reg-user" placeholder="Tên người dùng" required>
-                <input type="text" id="reg-display" placeholder="Tên hiển thị" required>
-                <input type="password" id="reg-pass" placeholder="Mật khẩu" required>
-                <input type="password" id="reg-repass" placeholder="Nhập lại mật khẩu" required>
-                <button type="submit" class="btn-submit">Đăng Ký Ngay</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL CÀI ĐẶT (NHẠC NỀN) -->
-    <div id="setting-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('setting-modal')">&times;</span>
-            <h2>CÀI ĐẶT HỆ THỐNG</h2>
-            <div class="setting-item">
-                <span>Nhạc nền sòng bạc</span>
-                <label class="switch">
-                    <input type="checkbox" id="bg-music-toggle" onchange="toggleMusic()">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <button class="btn-submit logout-btn" onclick="handleLogout()">Đăng Xuất</button>
-        </div>
-    </div>
-
-    <!-- MODAL THUẬT TOÁN (ZIC ZAC) -->
-    <div id="algorithm-modal" class="modal">
-        <div class="modal-content large">
-            <span class="close" onclick="closeModal('algorithm-modal')">&times;</span>
-            <h2>THUẬT TOÁN & QUY TẮC TÀI XỈU</h2>
-            <div class="algo-info">
-                <p><strong>Quy tắc tính điểm:</strong> Tổng điểm 3 viên xúc xắc từ 3 đến 10 là <strong>XỈU</strong>, từ 11 đến 18 là <strong>TÀI</strong>.</p>
-                <p><strong>Thuật toán RNG minh bạch:</strong> Kết quả được sinh ngẫu nhiên qua hàm mã hóa an toàn ở client, đảm bảo tính công bằng 100% cho mỗi phiên cược.</p>
-                <div class="matrix-box">
-                    <span>Trạng thái máy chủ: Đang đồng bộ hóa SSL</span>
-                    <span>Mã phiên bảo mật: <code id="algo-hash">a9f87b2c4e1</code></span>
+    <!-- Main Game Arena -->
+    <main class="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow items-center">
+        
+        <!-- Left Stats / History -->
+        <div class="glass-panel p-6 rounded-2xl flex flex-col h-[450px]">
+            <h3 class="text-lg font-bold text-purple-300 mb-4 border-b border-purple-500/20 pb-2">Lịch Sử Phiên</h3>
+            <div id="history-list" class="space-y-3 overflow-y-auto flex-grow pr-2 custom-scrollbar">
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl text-sm">
+                    <span class="text-purple-400">#88421</span>
+                    <span class="font-bold text-emerald-400">Tài (14)</span>
                 </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl text-sm">
+                    <span class="text-purple-400">#88420</span>
+                    <span class="font-bold text-rose-400">Xỉu (9)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Arena & Dice Rolling -->
+        <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center h-[450px] relative overflow-hidden animate-glow">
+            <div class="absolute top-4 text-xs tracking-widest text-purple-400 uppercase">Thời gian cược còn lại</div>
+            <div id="countdown" class="text-4xl font-black text-pink-500 mb-8">15s</div>
+
+            <!-- Dice Container -->
+            <div class="flex space-x-6 mb-10">
+                <div class="dice-3d" id="dice1">
+                    <div class="dice-face" style="transform: rotateY(0deg) translateZ(40px);"><div class="dot"></div></div>
+                    <div class="dice-face" style="transform: rotateY(90deg) translateZ(40px);"></div>
+                    <div class="dice-face" style="transform: rotateY(180deg) translateZ(40px);"></div>
+                    <div class="dice-face" style="transform: rotateY(-90deg) translateZ(40px);"></div>
+                    <div class="dice-face" style="transform: rotateX(90deg) translateZ(40px);"></div>
+                    <div class="dice-face" style="transform: rotateX(-90deg) translateZ(40px);"></div>
+                </div>
+                <div class="dice-3d" id="dice2">
+                    <div class="dice-face" style="transform: rotateY(0deg) translateZ(40px);"><div class="dot"></div></div>
+                </div>
+                <div class="dice-3d" id="dice3">
+                    <div class="dice-face" style="transform: rotateY(0deg) translateZ(40px);"><div class="dot"></div></div>
+                </div>
+            </div>
+
+            <div id="result-display" class="text-2xl font-black text-purple-200 tracking-wider">HỆ THỐNG SẴN SÀNG</div>
+        </div>
+
+        <!-- Right Betting Panel -->
+        <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between h-[450px]">
+            <div>
+                <h3 class="text-lg font-bold text-purple-300 mb-4 border-b border-purple-500/20 pb-2">Đặt Cược Nhanh</h3>
+                <div class="mb-4">
+                    <label class="text-xs text-purple-400 mb-1 block">Mức cược (VNĐ)</label>
+                    <input type="number" id="bet-amount" value="100000" class="w-full bg-black/50 border border-purple-500/30 rounded-xl px-4 py-3 text-white font-bold focus:outline-none focus:border-pink-500 transition">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="placeBet('tai')" class="py-5 bg-gradient-to-tr from-rose-600 to-red-500 hover:from-rose-500 hover:to-red-400 rounded-2xl font-black text-xl shadow-lg transition transform active:scale-95">TÀI</button>
+                <button onclick="placeBet('xiu')" class="py-5 bg-gradient-to-tr from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 rounded-2xl font-black text-xl shadow-lg transition transform active:scale-95">XỈU</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Withdrawal Modal Mockup -->
+    <div id="withdrawal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-3xl relative">
+            <h2 class="text-2xl font-black mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Cổng Rút Tiền / Thẻ Cào</h2>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="text-xs text-purple-400 mb-1 block">Phương thức</label>
+                    <select class="w-full bg-black/50 border border-purple-500/30 rounded-xl px-4 py-3 text-white font-bold focus:outline-none">
+                        <option>Ngân hàng trực tuyến (Vietcombank, MB, Techcombank...)</option>
+                        <option>Thẻ cào điện thoại (Viettel, Vinaphone, Mobifone)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-purple-400 mb-1 block">Số tài khoản / Số thẻ</label>
+                    <input type="text" placeholder="Nhập thông tin nhận tiền..." class="w-full bg-black/50 border border-purple-500/30 rounded-xl px-4 py-3 text-white font-bold focus:outline-none">
+                </div>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="closeModal()" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold transition">Hủy</button>
+                <button onclick="processWithdraw()" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-bold transition shadow-lg">Xác Nhận Rút</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL RÚT TIỀN ẢO -->
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('withdraw-modal')">&times;</span>
-            <h2>RÚT TIỀN HỆ THỐNG</h2>
-            <div class="withdraw-tabs">
-                <button class="w-tab active" onclick="switchWithdrawTab('bank')">Ngân hàng / ZaloPay</button>
-                <button class="w-tab" onclick="switchWithdrawTab('card')">Thẻ cào</button>
-                <button class="w-tab" onclick="switchWithdrawTab('usdt')">USDT (Crypto)</button>
-            </div>
-            <div id="withdraw-body" class="withdraw-form-container">
-                <!-- Dynamic form populated by JS -->
-            </div>
-        </div>
-    </div>
+    <!-- Script Engine -->
+    <script>
+        let balance = 10000000;
+        let currentBet = null;
 
-    <!-- THÔNG BÁO CƯỢC / KẾT QUẢ -->
-    <div id="toast-notify" class="toast hidden"></div>
+        function updateBalance() {
+            document.getElementById('balance').innerText = balance.toLocaleString('en-US');
+        }
 
-    <!-- AUDIO ELEMENTS -->
-    <audio id="bg-audio" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+        function openModal() {
+            document.getElementById('withdrawal-modal').classList.remove('hidden');
+            document.getElementById('withdrawal-modal').classList.add('flex');
+        }
 
-    <script src="script.js"></script>
+        function closeModal() {
+            document.getElementById('withdrawal-modal').classList.add('hidden');
+            document.getElementById('withdrawal-modal').classList.remove('flex');
+        }
+
+        function processWithdraw() {
+            alert("Yêu cầu rút tiền/thẻ cào đã được ghi nhận vào hàng đợi xử lý tự động.");
+            closeModal();
+        }
+
+        function placeBet(type) {
+            let amount = parseInt(document.getElementById('bet-amount').value);
+            if (amount > balance) {
+                alert("Số dư không đủ để thực hiện giao dịch này!");
+                return;
+            }
+            balance -= amount;
+            updateBalance();
+            currentBet = type;
+            document.getElementById('result-display').innerText = `Đã cược ${amount.toLocaleString()} VNĐ vào ${type.toUpperCase()}`;
+        }
+
+        // Countdown & Dice Simulation Loop
+        let timeLeft = 15;
+        setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                timeLeft = 15;
+                triggerRollAnimation();
+            }
+            document.getElementById('countdown').innerText = timeLeft + 's';
+        }, 1000);
+
+        function triggerRollAnimation() {
+            const d1 = document.getElementById('dice1');
+            const d2 = document.getElementById('dice2');
+            const d3 = document.getElementById('dice3');
+
+            d1.style.transform = `rotateX(${Math.random() * 720}deg) rotateY(${Math.random() * 720}deg)`;
+            d2.style.transform = `rotateX(${Math.random() * 720}deg) rotateY(${Math.random() * 720}deg)`;
+            d3.style.transform = `rotateX(${Math.random() * 720}deg) rotateY(${Math.random() * 720}deg)`;
+
+            setTimeout(() => {
+                let v1 = Math.floor(Math.random() * 6) + 1;
+                let v2 = Math.floor(Math.random() * 6) + 1;
+                let v3 = Math.floor(Math.random() * 6) + 1;
+                let total = v1 + v2 + v3;
+                let outcome = total > 10 ? 'Tài' : 'Xỉu';
+                document.getElementById('result-display').innerText = `Kết quả: ${v1} - ${v2} - ${v3} (${total} Điểm -> ${outcome})`;
+            }, 1200);
+        }
+    </script>
 </body>
 </html>
